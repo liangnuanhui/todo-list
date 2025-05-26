@@ -1,5 +1,5 @@
 // frontend/src/App.tsx
-import { useEffect, useState, FormEvent } from "react";
+import { useEffect, useState, type FormEvent } from "react";
 import "./App.css"; // 你可以添加一些基础样式
 
 interface Todo {
@@ -43,25 +43,35 @@ function App() {
   // 添加 Todo
   const handleAddTodo = async (e: FormEvent) => {
     e.preventDefault();
-    if (!newTodoTitle.trim()) return;
+    if (!newTodoTitle.trim()) {
+      setError("请输入待办事项内容");
+      return;
+    }
     try {
+      setIsLoading(true);
+      setError(null);
       const response = await fetch(`${API_BASE_URL}/todos`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ title: newTodoTitle }),
       });
       if (!response.ok) {
-        const errData = await response.json();
-        throw new Error(
-          errData.error || `HTTP error! status: ${response.status}`
-        );
+        let errMsg = `HTTP error! status: ${response.status}`;
+        try {
+          const errData = await response.json();
+          errMsg = errData.error || errMsg;
+        } catch {
+          /* empty */
+        }
+        throw new Error(errMsg);
       }
-      const newTodo = await response.json();
-      setTodos([newTodo, ...todos]);
       setNewTodoTitle("");
+      await fetchTodos(); // 保证和后端一致
     } catch (e) {
       console.error("Failed to add todo:", e);
       setError(e instanceof Error ? e.message : "Failed to add todo");
+    } finally {
+      setIsLoading(false);
     }
   };
 
