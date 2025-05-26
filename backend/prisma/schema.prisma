@@ -7,8 +7,10 @@ generator client {
 
 datasource db {
   provider = "sqlite"
-  url      = "file:./dev.db" // SQLite 文件将存放在 backend/prisma/dev.db
+  // url      = "file:./dev.db" // SQLite 文件将存放在 backend/prisma/dev.db
+  url = env("DATABASE_URL")
 }
+
 
 model Todo {
   id        Int      @id @default(autoincrement())

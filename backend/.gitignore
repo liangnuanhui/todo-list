@@ -2,4 +2,20 @@ node_modules
 # Keep environment variables out of version control
 .env
 
+
+# Dependencies
+node_modules/
+
+# Build output (compiled TypeScript)
+dist/
+
+# Environment variables
+.env
+
+# Prisma / SQLite specific
+prisma/dev.db
+prisma/dev.db-journal
+# prisma/migrations/**/*.sqlite # 可选，如果迁移生成临时 .sqlite 文件
+
+
 /generated/prisma
